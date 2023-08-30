@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  statistics:
+    container_name: statistics_innotter
+    build: .
+    command: sh ./entrypoint.sh
+    volumes:
+      - .:/app
+    ports:
+      - "8002:8002"
+    env_file:
+      - ./.env
+    restart: on-failure
+    depends_on:
+      - dynamodb
+    networks:
+      - user-management_default
+
+  dynamodb:
+    container_name: dynamodb
+    image: amazon/dynamodb-local
+    env_file:
+      - ./.env
+    volumes:
+      - ./dynamodb_data:/data
+
+networks:
+    user-management_default:
+      external: true
+
+volumes:
+  dynamodb_data:
